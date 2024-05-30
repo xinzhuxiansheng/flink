@@ -232,7 +232,7 @@ public class StreamGraphGenerator {
             final List<Transformation<?>> transformations,
             final ExecutionConfig executionConfig,
             final CheckpointConfig checkpointConfig) {
-        this(transformations, executionConfig, checkpointConfig, new Configuration());
+        this(transformations, executionConfig, checkpointConfig, new Configuration()); // @VisibleForTesting
     }
 
     public StreamGraphGenerator(

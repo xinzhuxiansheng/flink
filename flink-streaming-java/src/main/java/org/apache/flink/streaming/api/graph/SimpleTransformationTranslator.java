@@ -53,7 +53,7 @@ public abstract class SimpleTransformationTranslator<OUT, T extends Transformati
     }
 
     @Override
-    public final Collection<Integer> translateForStreaming(
+    public final Collection<Integer> translateForStreaming( // yzhou
             final T transformation, final Context context) {
         checkNotNull(transformation);
         checkNotNull(context);

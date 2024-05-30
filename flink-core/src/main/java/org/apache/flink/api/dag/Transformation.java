@@ -210,7 +210,7 @@ public abstract class Transformation<T> {
         this.name = Preconditions.checkNotNull(name);
         this.outputType = outputType;
         this.parallelism = parallelism;
-        this.slotSharingGroup = Optional.empty();
+        this.slotSharingGroup = Optional.empty(); // yzhou
         this.parallelismConfigured =
                 parallelismConfigured && parallelism != ExecutionConfig.PARALLELISM_DEFAULT;
     }
@@ -445,7 +445,7 @@ public abstract class Transformation<T> {
      * @see #setSlotSharingGroup(SlotSharingGroup)
      */
     public Optional<SlotSharingGroup> getSlotSharingGroup() {
-        return slotSharingGroup;
+        return slotSharingGroup; // yzhou
     }
 
     /**
@@ -458,7 +458,7 @@ public abstract class Transformation<T> {
      * @param slotSharingGroupName The slot sharing group's name.
      */
     public void setSlotSharingGroup(String slotSharingGroupName) {
-        this.slotSharingGroup =
+        this.slotSharingGroup = // yzhou
                 Optional.of(SlotSharingGroup.newBuilder(slotSharingGroupName).build());
     }
 
@@ -472,7 +472,7 @@ public abstract class Transformation<T> {
      * @param slotSharingGroup which contains name and its resource spec.
      */
     public void setSlotSharingGroup(SlotSharingGroup slotSharingGroup) {
-        this.slotSharingGroup = Optional.of(slotSharingGroup);
+        this.slotSharingGroup = Optional.of(slotSharingGroup); // yzhou
     }
 
     /**

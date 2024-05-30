@@ -104,7 +104,7 @@ public class JarPlanHandler
         return CompletableFuture.supplyAsync(
                 () -> {
                     try (PackagedProgram packagedProgram =
-                            context.toPackagedProgram(effectiveConfiguration)) {
+                                 context.toPackagedProgram(effectiveConfiguration)) {
                         final JobGraph jobGraph =
                                 context.toJobGraph(packagedProgram, effectiveConfiguration, true);
                         return planGenerator.apply(jobGraph);

@@ -155,7 +155,7 @@ public enum PackagedProgramUtils {
         senv.setAsContext();
 
         try {
-            program.invokeInteractiveModeForExecution();
+            program.invokeInteractiveModeForExecution(); // 执行 main()
         } catch (Throwable t) {
             if (benv.getPipeline() != null) {
                 return benv.getPipeline();
