@@ -11,13 +11,14 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class StreamWordCount {
-    private static Logger logger = Logger.getLogger(StreamWordCount.class);
+    private static Logger logger = LoggerFactory.getLogger(StreamWordCount.class);
 
     public static void main(String[] args) throws Exception {
         // 1. 创建流式执行环境
@@ -33,9 +34,11 @@ public class StreamWordCount {
 
         // 3. 转换数据格式
         SingleOutputStreamOperator<Tuple2<String, Long>> wordAndOne = lineDSS
-                .flatMap((String line, Collector<String> words) -> {
+                .flatMap(
+                        (String line, Collector<String> words) -> {
                     Arrays.stream(line.split(" ")).forEach(words::collect);
-                })
+                        }
+                        )
                 .returns(Types.STRING)
                 .map(word -> Tuple2.of(word, 1L))
                 .returns(Types.TUPLE(Types.STRING, Types.LONG)).setParallelism(2);
@@ -45,7 +48,7 @@ public class StreamWordCount {
                 .keyBy(t -> t.f0);
         // 5. 求和
         SingleOutputStreamOperator<Tuple2<String, Long>> result = wordAndOneKS
-                .sum(1).setParallelism(1);
+                .sum(1).setParallelism(1).uid("wc-sum");
 
         // 6. 打印
         result.print();

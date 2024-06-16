@@ -569,7 +569,7 @@ public class CheckpointCoordinator {
 
     private void startTriggeringCheckpoint(CheckpointTriggerRequest request) {
         try {
-            synchronized (lock) {
+            synchronized (lock) { // 触发前，对 checkpoint 进行预检查
                 preCheckGlobalState(request.isPeriodic);
             }
 
@@ -580,7 +580,7 @@ public class CheckpointCoordinator {
             final long timestamp = System.currentTimeMillis();
 
             CompletableFuture<CheckpointPlan> checkpointPlanFuture =
-                    checkpointPlanCalculator.calculateCheckpointPlan();
+                    checkpointPlanCalculator.calculateCheckpointPlan(); // 确保作业不是处于关闭中或未启动的状态
 
             boolean initializeBaseLocations = !baseLocationsForCheckpointInitialized;
             baseLocationsForCheckpointInitialized = true;
@@ -596,7 +596,7 @@ public class CheckpointCoordinator {
                                             // because it communicates with external services
                                             // (in HA mode) and may block for a while.
                                             long checkpointID =
-                                                    checkpointIdCounter.getAndIncrement();
+                                                    checkpointIdCounter.getAndIncrement();  // 创建 checkpointID
                                             return new Tuple2<>(plan, checkpointID);
                                         } catch (Throwable e) {
                                             throw new CompletionException(e);
