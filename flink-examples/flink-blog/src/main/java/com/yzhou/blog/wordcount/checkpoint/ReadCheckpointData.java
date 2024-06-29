@@ -20,7 +20,6 @@ public class ReadCheckpointData {
         DataStream<KeyedState> keyedCountState = savepoint.readKeyedState(
                 "wc-sum",
                 new ReaderFunction());
-
 //        keyedCountState.addSink(new SinkFunction<KeyedState>() {
 //            @Override
 //            public void invoke(KeyedState value, Context context) throws Exception {
