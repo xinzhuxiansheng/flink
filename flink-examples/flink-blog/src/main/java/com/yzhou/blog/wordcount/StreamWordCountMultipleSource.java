@@ -5,6 +5,7 @@ import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -17,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-public class StreamWordCount {
-    private static Logger logger = LoggerFactory.getLogger(StreamWordCount.class);
+public class StreamWordCountMultipleSource {
+    private static Logger logger = LoggerFactory.getLogger(StreamWordCountMultipleSource.class);
 
     public static void main(String[] args) throws Exception {
         // 1. 创建流式执行环境
@@ -29,11 +30,14 @@ public class StreamWordCount {
         env.setRestartStrategy(RestartStrategies
                 .fixedDelayRestart(3, Time.of(10, TimeUnit.SECONDS)));
         // 2. Socket 读取  nc -lk 7777
-        DataStreamSource<String> lineDSS = env
-                .socketTextStream("yzhou.com", 7777);
+        DataStreamSource<String> source1 = env
+                .socketTextStream("localhost", 7777);
+        DataStreamSource<String> source2 = env
+                .socketTextStream("localhost", 8888);
+        DataStream<String> mergedSources = source1.union(source2);
 
         // 3. 转换数据格式n
-        SingleOutputStreamOperator<Tuple2<String, Long>> wordAndOne = lineDSS
+        SingleOutputStreamOperator<Tuple2<String, Long>> wordAndOne = mergedSources
                 .flatMap(
                         (String line, Collector<String> words) -> {
                     Arrays.stream(line.split(" ")).forEach(words::collect);

@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-public class StreamWordCount {
-    private static Logger logger = LoggerFactory.getLogger(StreamWordCount.class);
+public class StreamWordCountWithUidHash {
+    private static Logger logger = LoggerFactory.getLogger(StreamWordCountWithUidHash.class);
 
     public static void main(String[] args) throws Exception {
         // 1. 创建流式执行环境
@@ -30,7 +30,7 @@ public class StreamWordCount {
                 .fixedDelayRestart(3, Time.of(10, TimeUnit.SECONDS)));
         // 2. Socket 读取  nc -lk 7777
         DataStreamSource<String> lineDSS = env
-                .socketTextStream("yzhou.com", 7777);
+                .socketTextStream("localhost", 7777);
 
         // 3. 转换数据格式n
         SingleOutputStreamOperator<Tuple2<String, Long>> wordAndOne = lineDSS
@@ -48,7 +48,7 @@ public class StreamWordCount {
                 .keyBy(t -> t.f0);
         // 5. 求和
         SingleOutputStreamOperator<Tuple2<String, Long>> result = wordAndOneKS
-                .sum(1).setParallelism(1).uid("wc-sum");
+                .sum(1).setParallelism(1).uid("wc-sum").setUidHash("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         // 6. 打印
         result.print();
