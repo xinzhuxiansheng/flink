@@ -33,7 +33,8 @@ public class StreamWordCountUseState {
                 .fixedDelayRestart(3, Time.of(10, TimeUnit.SECONDS)));
         // 2. Socket 读取  nc -lk 7777
         DataStreamSource<String> lineDSS = env
-                .socketTextStream("localhost", 7777);
+                .socketTextStream("localhost", 7777)
+                .setParallelism(1);
 
         // 3. 转换数据格式
         SingleOutputStreamOperator<Tuple2<String, Long>> wordAndOne = lineDSS
@@ -42,8 +43,10 @@ public class StreamWordCountUseState {
                             Arrays.stream(line.split(" ")).forEach(words::collect);
                         }
                 )
+                .setParallelism(1)
                 .returns(Types.STRING)
                 .map(word -> Tuple2.of(word, 1L))
+                .setParallelism(1)
                 .returns(Types.TUPLE(Types.STRING, Types.LONG)).setParallelism(2);
 
         // 4. 分组
@@ -55,7 +58,7 @@ public class StreamWordCountUseState {
                 .setParallelism(1).uid("wc-sum");
 
         // 6. 打印
-        result.print();
+        result.print().setParallelism(1);
         logger.info(result.toString());
         // 7. 执行
         env.execute();
