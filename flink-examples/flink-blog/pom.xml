@@ -54,6 +54,19 @@
 		</dependency>
 
 
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-kafka</artifactId>
+			<version>1.17.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>3.2.3</version>
+			<scope>provided</scope>
+		</dependency>
+
 
 
 		<!-- 引入日志管理相关依赖-->

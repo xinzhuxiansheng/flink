@@ -30,7 +30,7 @@ public class StreamWordCount {
                 .fixedDelayRestart(3, Time.of(10, TimeUnit.SECONDS)));
         // 2. Socket 读取  nc -lk 7777
         DataStreamSource<String> lineDSS = env
-                .socketTextStream("yzhou.com", 7777);
+                .socketTextStream("vm01.com", 7777);
 
         // 3. 转换数据格式n
         SingleOutputStreamOperator<Tuple2<String, Long>> wordAndOne = lineDSS
@@ -52,7 +52,7 @@ public class StreamWordCount {
 
         // 6. 打印
         result.print();
-        logger.info(result.toString());
+        //logger.info(result.toString());
         // 7. 执行
         env.execute();
     }
