@@ -110,13 +110,13 @@ class CheckpointRequestDecider {
      */
     Optional<CheckpointTriggerRequest> chooseRequestToExecute(
             CheckpointTriggerRequest newRequest, boolean isTriggering, long lastCompletionMs) {
-        if (queuedRequests.size() >= maxQueuedRequests && !queuedRequests.last().isPeriodic) {
+        if (queuedRequests.size() >= maxQueuedRequests && !queuedRequests.last().isPeriodic) { // yzhou 检查请求队列是否已满，并且最后一次ck请求是否是非周期请求
             // there are only non-periodic (ie user-submitted) requests enqueued - retain them and
             // drop the new one
-            newRequest.completeExceptionally(new CheckpointException(TOO_MANY_CHECKPOINT_REQUESTS));
+            newRequest.completeExceptionally(new CheckpointException(TOO_MANY_CHECKPOINT_REQUESTS)); // yzhou 返回ck请求过多，不做任何处理
             return Optional.empty();
         } else {
-            queuedRequests.add(newRequest);
+            queuedRequests.add(newRequest); // yzhou 将新的检查点请求添加到队列中
             if (queuedRequests.size() > maxQueuedRequests) {
                 queuedRequests
                         .pollLast()
@@ -124,8 +124,8 @@ class CheckpointRequestDecider {
                                 new CheckpointException(TOO_MANY_CHECKPOINT_REQUESTS));
             }
             Optional<CheckpointTriggerRequest> request =
-                    chooseRequestToExecute(isTriggering, lastCompletionMs);
-            request.ifPresent(CheckpointRequestDecider::logInQueueTime);
+                    chooseRequestToExecute(isTriggering, lastCompletionMs); // yzhou 按策略选择请求执行
+            request.ifPresent(CheckpointRequestDecider::logInQueueTime); // yzhou 记录排队时间用于日志监控
             return request;
         }
     }
@@ -203,16 +203,16 @@ class CheckpointRequestDecider {
 
     private static Comparator<CheckpointTriggerRequest> checkpointTriggerRequestsComparator() {
         return (r1, r2) -> {
-            if (r1.props.isSavepoint() != r2.props.isSavepoint()) {
+            if (r1.props.isSavepoint() != r2.props.isSavepoint()) { // yzhou 保存点优先，Savepoint 优先于 Checkpoint
                 return r1.props.isSavepoint() ? -1 : 1;
-            } else if (r1.isForce() != r2.isForce()) {
+            } else if (r1.isForce() != r2.isForce()) { // yzhou 强制触发优先
                 return r1.isForce() ? -1 : 1;
-            } else if (r1.isPeriodic != r2.isPeriodic) {
+            } else if (r1.isPeriodic != r2.isPeriodic) { // yzhou 手动触发 优先于 周期
                 return r1.isPeriodic ? 1 : -1;
             } else if (r1.timestamp != r2.timestamp) {
-                return Long.compare(r1.timestamp, r2.timestamp);
+                return Long.compare(r1.timestamp, r2.timestamp); // yzhou 时间越早，触发越早
             } else {
-                return Integer.compare(identityHashCode(r1), identityHashCode(r2));
+                return Integer.compare(identityHashCode(r1), identityHashCode(r2)); // yzhou 内存地址兜底
             }
         };
     }

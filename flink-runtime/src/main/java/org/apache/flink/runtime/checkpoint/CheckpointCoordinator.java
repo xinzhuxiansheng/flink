@@ -580,7 +580,7 @@ public class CheckpointCoordinator {
             final long timestamp = System.currentTimeMillis();
 
             CompletableFuture<CheckpointPlan> checkpointPlanFuture =
-                    checkpointPlanCalculator.calculateCheckpointPlan(); // 确保作业不是处于关闭中或未启动的状态
+                    checkpointPlanCalculator.calculateCheckpointPlan(); // yzhou
 
             boolean initializeBaseLocations = !baseLocationsForCheckpointInitialized;
             baseLocationsForCheckpointInitialized = true;
